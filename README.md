@@ -1,5 +1,7 @@
 # beckon-generator
 
+[![Build Status](https://travis-ci.com/kkweon/beckon-generator.svg?branch=master)](https://travis-ci.com/kkweon/beckon-generator)
+
 ## Help
 
 ```shell
