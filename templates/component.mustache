@@ -1,0 +1,44 @@
+(function() {
+    "use strict";
+
+    angular
+        .module("{{ moduleName }}", [])
+        .component("{{ componentName }}", {
+            templateUrl: "{{ componentName }}",
+            controller: function() {
+
+            },
+        });
+})();
+
+####
+
+<div>
+  <h2>Hello {{ componentName }}!</h2>
+</div>
+
+####
+
+describe("{{ componentName }}", function() {
+    "use strict";
+    let $rootScope, $compile;
+
+    beforeEach(module("{{ moduleName }}"));
+    beforeEach(
+        inject(function(_$compile_, _$rootScope_) {
+            $compile = _$compile_;
+            $rootScope = _$rootScope_;
+        })
+    );
+
+    it("should open when the button is clicked", function() {
+        const $scope = $rootScope.$new(true);
+        $scope.values = ["item1", "item2"];
+
+        const element = $compile(`<{{ component-name }}></{{ component-name }}>`)(
+            $scope
+        );
+        $scope.$digest();
+        expect(element).toBeDefined();
+    }
+})
