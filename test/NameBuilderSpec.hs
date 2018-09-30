@@ -22,6 +22,8 @@ spec =
       it "returns a component name" $
         N.getComponentName "steel.answerPage" `shouldBe` "answerPage"
       it "returns a component name" $
+        N.getComponentName "steel.answer-page" `shouldBe` "answerPage"
+      it "returns a component name" $
         N.getComponentName "beckon.steel.answerPage" `shouldBe` "answerPage"
 
     describe "get_ComponentName" $ do

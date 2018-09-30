@@ -1,7 +1,22 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NamedFieldPuns #-}
 
-module Lib where
+{-|
+Module      : Lib
+Description : Command line arguments
+Copyright   : (c) Mo Kweon
+License     : MIT
+Maintainer  : kkweon@gmail.com
+Stability   : experimental
+Portability : POSIX
+
+This file handles command line arguments
+-}
+module Lib
+  ( handleGenerateComponent
+  , BeckonGeneratorOption(..)
+  , beckonGeneratorOptionParser
+  ) where
 
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
@@ -11,8 +26,9 @@ import qualified NameBuilder as N
 import qualified Options.Applicative as A
 import qualified Template as TE
 
-handleGenerateComponent :: Arg -> IO ()
-handleGenerateComponent Arg {moduleName, specFile, isService} =
+-- | Entry point
+handleGenerateComponent :: BeckonGeneratorOption -> IO ()
+handleGenerateComponent BeckonGeneratorOption {moduleName, specFile, isService} =
   let generatedType =
         if isService
           then TE.Service
@@ -21,20 +37,19 @@ handleGenerateComponent Arg {moduleName, specFile, isService} =
         Left errorMsg -> TIO.putStrLn errorMsg
         Right beckonGenerated -> F.generateBeckonFiles specFile beckonGenerated
 
-data Arg = Arg
+-- | Available command line options
+data BeckonGeneratorOption = BeckonGeneratorOption
   { moduleName :: T.Text
   , specFile :: Bool
   , isService :: Bool
   }
 
-arg :: A.Parser Arg
-arg =
-  Arg <$>
+-- | Helper to build a command line options
+beckonGeneratorOptionParser :: A.Parser BeckonGeneratorOption
+beckonGeneratorOptionParser =
+  BeckonGeneratorOption <$>
   A.strArgument
     (A.metavar "MODULE NAME" <>
      A.help "Beckon Module Name (e.g., beckon.steel.answerPage)") <*>
   A.switch (A.long "spec" <> A.short 'S' <> A.help "Generate a spec file") <*>
   A.switch (A.long "service" <> A.help "Generate a service file")
-
-greet :: Arg -> IO ()
-greet arg = handleGenerateComponent arg
