@@ -5,6 +5,7 @@ module Config
   ( srcDirectory
   , testDirectory
   , componentTemplate
+  , serviceTemplate
   ) where
 
 import qualified System.FilePath.Posix as F
@@ -20,3 +21,6 @@ testDirectory = "./src/test/javascript/unit"
 
 componentTemplate :: M.Template
 componentTemplate = $(embedSingleTemplate "templates/component.mustache")
+
+serviceTemplate :: M.Template
+serviceTemplate = $(embedSingleTemplate "templates/service.mustache")

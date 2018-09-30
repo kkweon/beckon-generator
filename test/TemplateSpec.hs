@@ -5,7 +5,7 @@ module TemplateSpec
   ) where
 
 import qualified Config as C
-import Template (NgTemplate(..), BeckonFile(..), BeckonGenerated(..))
+import Template (NgTemplate(..), BeckonFile(..), BeckonGeneratedFile(..))
 import qualified Template as T
 import Test.Hspec
 import qualified Text.Mustache as M
@@ -20,6 +20,7 @@ spec =
               NgTemplate
                 { moduleName = "beckon.steel.answerPage"
                 , componentName = "answerPage"
+                , _ComponentName = "AnswerPage"
                 , component_name = "answer-page"
                 }
         let result = M.substitute C.componentTemplate ngTemplate
@@ -28,7 +29,7 @@ spec =
 
     describe "getBeckonGeneratedComponent" $
         it "do something" $ do
-            let result = T.getBeckonGeneratedComponent "steel.answerPage"
+            let result = T.getBeckonGeneratedFile T.Component "steel.answerPage"
 
             case result of
                 Right bg -> content (tmplFile bg) `shouldBe` "\n\n<div>\n  <h2>Hello answerPage!</h2>\n</div>\n\n"

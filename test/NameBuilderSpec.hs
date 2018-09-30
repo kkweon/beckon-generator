@@ -24,6 +24,12 @@ spec =
       it "returns a component name" $
         N.getComponentName "beckon.steel.answerPage" `shouldBe` "answerPage"
 
+    describe "get_ComponentName" $ do
+      it "returns a component name" $
+        N.get_ComponentName "steel.answerPage" `shouldBe` "AnswerPage"
+      it "returns a component name" $
+        N.get_ComponentName "beckon.steel.answerPage" `shouldBe` "AnswerPage"
+
     describe "toHypenCase" $ do
       it "returns hypen-case when given hypenCase" $
         N.toHypenCase "hypenCase" `shouldBe` "hypen-case"

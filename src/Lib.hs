@@ -11,15 +11,20 @@ import qualified NameBuilder as N
 import qualified Options.Applicative as A
 import qualified Template as TE
 
-handleGenerateComponent :: Bool -> T.Text -> IO ()
-handleGenerateComponent specFile maybeModuleName =
-  case TE.getBeckonGeneratedComponent maybeModuleName of
-    Left errorMsg -> TIO.putStrLn errorMsg
-    Right beckonGenerated -> F.generateBeckonFiles specFile beckonGenerated
+handleGenerateComponent :: Arg -> IO ()
+handleGenerateComponent Arg {moduleName, specFile, isService} =
+  let generatedType =
+        if isService
+          then TE.Service
+          else TE.Component
+   in case TE.getBeckonGeneratedFile generatedType moduleName of
+        Left errorMsg -> TIO.putStrLn errorMsg
+        Right beckonGenerated -> F.generateBeckonFiles specFile beckonGenerated
 
 data Arg = Arg
   { moduleName :: T.Text
   , specFile :: Bool
+  , isService :: Bool
   }
 
 arg :: A.Parser Arg
@@ -28,7 +33,8 @@ arg =
   A.strArgument
     (A.metavar "MODULE NAME" <>
      A.help "Beckon Module Name (e.g., beckon.steel.answerPage)") <*>
-  A.switch (A.long "spec" <> A.short 'S' <> A.help "Generate a spec file")
+  A.switch (A.long "spec" <> A.short 'S' <> A.help "Generate a spec file") <*>
+  A.switch (A.long "service" <> A.help "Generate a service file")
 
 greet :: Arg -> IO ()
-greet Arg {moduleName, specFile } = handleGenerateComponent specFile moduleName
+greet arg = handleGenerateComponent arg
