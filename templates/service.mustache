@@ -1,24 +1,24 @@
 (function() {
  "use strict";
 
- /**
-  * @ngdoc service
-  * @name {{ moduleName }}:{{ ComponentName }}
-  * @scope
-  * @section
-  *
-  * @description
-  *
-  */
- class {{ ComponentName }} {
- constructor() {
- "ngInject";
- }
- }
+  /**
+   * @ngdoc service
+   * @name {{ moduleName }}:{{ ComponentName }}
+   * @scope
+   * @section
+   *
+   * @description
+   *
+   */
+  class {{ ComponentName }} {
+    constructor() {
+      "ngInject";
+    }
+  }
 
- angular
-     .module("{{ moduleName }}", [])
-     .service("{{ componentName }}", {{ ComponentName }});
+  angular
+    .module("{{ moduleName }}", [])
+    .service("{{ componentName }}", {{ ComponentName }});
 })();
 ####
 describe("{{ componentName }}", function() {

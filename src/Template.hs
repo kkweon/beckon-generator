@@ -91,7 +91,7 @@ getBeckonGeneratedFile generatedType maybeModuleName
             Service -> C.serviceTemplate
             Component -> C.componentTemplate
         processedTemplate =
-          T.splitOn "####" (substitute templateFile ngTemplate)
+          map T.strip . T.splitOn "####" $ substitute templateFile ngTemplate
      in _getBeckonGenerated beckonModuleName processedTemplate
   | otherwise = Left "Module Name should be something like steel.answerPage"
 
