@@ -10,15 +10,11 @@
             },
         });
 })();
-
 ####
-
 <div>
-  <h2>Hello {{ componentName }}!</h2>
+  <h2>Hello {{ component-name }}!</h2>
 </div>
-
 ####
-
 describe("{{ componentName }}", function() {
     "use strict";
     let $rootScope, $compile;
@@ -40,5 +36,5 @@ describe("{{ componentName }}", function() {
         );
         $scope.$digest();
         expect(element).toBeDefined();
-    }
+    })
 })
