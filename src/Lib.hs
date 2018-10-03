@@ -28,19 +28,20 @@ import qualified Template as TE
 
 -- | Entry point
 handleGenerateComponent :: BeckonGeneratorOption -> IO ()
-handleGenerateComponent BeckonGeneratorOption {moduleName, specFile, isService} =
+handleGenerateComponent BeckonGeneratorOption {moduleName, specFile, specOnly, isService} =
   let generatedType =
         if isService
           then TE.Service
           else TE.Component
    in case TE.getBeckonGeneratedFile generatedType moduleName of
         Left errorMsg -> TIO.putStrLn errorMsg
-        Right beckonGenerated -> F.generateBeckonFiles specFile beckonGenerated
+        Right beckonGenerated -> F.generateBeckonFiles specFile specOnly beckonGenerated
 
 -- | Available command line options
 data BeckonGeneratorOption = BeckonGeneratorOption
   { moduleName :: T.Text
   , specFile :: Bool
+  , specOnly :: Bool
   , isService :: Bool
   }
 
@@ -52,4 +53,5 @@ beckonGeneratorOptionParser =
     (A.metavar "MODULE NAME" <>
      A.help "Beckon Module Name (e.g., beckon.steel.answerPage)") <*>
   A.switch (A.long "spec" <> A.short 'S' <> A.help "Generate a spec file") <*>
+  A.switch (A.long "spec-only" <> A.help "Generate a spec file only") <*>
   A.switch (A.long "service" <> A.help "Generate a service file")

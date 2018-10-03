@@ -23,18 +23,24 @@ import           Template              (BeckonFile (..),
                                         BeckonGeneratedFile (..))
 
 -- | Generate Beckon Files
-generateBeckonFiles :: Bool -- ^ If True, generates a spec file
-                    -> BeckonGeneratedFile
-                    -> IO ()
-generateBeckonFiles shouldGenerateSpecFile BeckonGeneratedService { srcFile
-                                                                  , specFile
-                                                                  } = do
-  generateBeckonFile srcFile
-  unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
-generateBeckonFiles shouldGenerateSpecFile BeckonGeneratedComponent { srcFile
-                                                                    , tmplFile
+generateBeckonFiles ::
+     Bool -- ^ If True, generates a spec file
+  -> Bool -- ^ If True, generates a spec file only
+  -> BeckonGeneratedFile
+  -> IO ()
+generateBeckonFiles _ True BeckonGeneratedService {specFile} =
+  generateBeckonFile specFile
+generateBeckonFiles _ True BeckonGeneratedComponent {specFile} =
+  generateBeckonFile specFile
+generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedService { srcFile
                                                                     , specFile
                                                                     } = do
+  generateBeckonFile srcFile
+  unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
+generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedComponent { srcFile
+                                                                      , tmplFile
+                                                                      , specFile
+                                                                      } = do
   generateBeckonFile srcFile
   generateBeckonFile tmplFile
   unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
