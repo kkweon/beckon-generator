@@ -17,13 +17,18 @@ module Template
   , BeckonFile(..)
   , GeneratedType(..)
   , getBeckonGeneratedFile
-  ) where
+  )
+where
 
-import qualified Config as C
-import qualified Data.Text as T
-import qualified NameBuilder as N
-import Text.Mustache (ToMustache, (~>), object, substitute, toMustache)
-
+import qualified Config                        as C
+import qualified Data.Text                     as T
+import qualified NameBuilder                   as N
+import           Text.Mustache                  ( ToMustache
+                                                , (~>)
+                                                , object
+                                                , substitute
+                                                , toMustache
+                                                )
 
 -- | This type is used to replace a mustache template file
 -- The template file contains @{{ moduleName }}@, @{{ componentName }}@, @{{ ComponentName }}@, @{{ component-name }}@
@@ -45,13 +50,11 @@ instance ToMustache NgTemplate where
       , "moduleName" ~> moduleName ngTemplate
       ]
 
-
 -- | Indicate a each Beckon File
 data BeckonFile = BeckonFile
   { target :: FilePath -- ^ FilePath to be created
   , content :: T.Text -- ^ The content of file to be created
   } deriving (Show)
-
 
 -- | Either Service / Component is supported
 data BeckonGeneratedFile
@@ -67,33 +70,32 @@ data GeneratedType
   | Service
   deriving (Show)
 
-
 -- |
 --
 -- >>> getBeckonGeneratedFile Component "beckon.steel.answerPage"
-getBeckonGeneratedFile ::
-     GeneratedType -- ^ Component or Service
-     -> T.Text -- ^ moduleName
-     -> Either T.Text BeckonGeneratedFile
+getBeckonGeneratedFile
+  :: GeneratedType -- ^ Component or Service
+  -> T.Text -- ^ moduleName
+  -> Either T.Text BeckonGeneratedFile
 getBeckonGeneratedFile generatedType maybeModuleName
-  | N.isModuleName maybeModuleName =
-    let beckonModuleName = N.addBeckonPrefix maybeModuleName
-        ngTemplate =
-          NgTemplate
-            { moduleName = beckonModuleName
-            , componentName = N.getComponentName beckonModuleName
-            , _ComponentName = N.get_ComponentName beckonModuleName
-            , component_name =
-                N.toHypenCase (N.getComponentName beckonModuleName)
-            }
-        templateFile =
-          case generatedType of
-            Service -> C.serviceTemplate
-            Component -> C.componentTemplate
-        processedTemplate =
-          map T.strip . T.splitOn "####" $ substitute templateFile ngTemplate
-     in _getBeckonGenerated beckonModuleName processedTemplate
-  | otherwise = Left "Module Name should be something like steel.answerPage"
+  | N.isModuleName maybeModuleName
+  = let
+      beckonModuleName = N.addBeckonPrefix maybeModuleName
+      ngTemplate       = NgTemplate
+        { moduleName     = beckonModuleName
+        , componentName  = N.getComponentName beckonModuleName
+        , _ComponentName = N.get_ComponentName beckonModuleName
+        , component_name = N.toHypenCase (N.getComponentName beckonModuleName)
+        }
+      templateFile = case generatedType of
+        Service   -> C.serviceTemplate
+        Component -> C.componentTemplate
+      processedTemplate =
+        map T.strip . T.splitOn "####" $ substitute templateFile ngTemplate
+    in
+      _getBeckonGenerated beckonModuleName processedTemplate
+  | otherwise
+  = Left "Module Name should be something like steel.answerPage"
 
 -- | Private Function
 -- | Build BeckonGeneratedFile
@@ -103,7 +105,7 @@ _getBeckonGenerated beckonModuleName [src, spec] =
         BeckonFile {target = N.getSrcFilePath beckonModuleName, content = src}
       specFile =
         BeckonFile {target = N.getSpecFilePath beckonModuleName, content = spec}
-   in Right BeckonGeneratedService {srcFile = srcFile, specFile = specFile}
+  in  Right BeckonGeneratedService {srcFile = srcFile, specFile = specFile}
 _getBeckonGenerated beckonModuleName [src, tmpl, spec] =
   let srcFile =
         BeckonFile {target = N.getSrcFilePath beckonModuleName, content = src}
@@ -111,7 +113,9 @@ _getBeckonGenerated beckonModuleName [src, tmpl, spec] =
         BeckonFile {target = N.getTmplFilePath beckonModuleName, content = tmpl}
       specFile =
         BeckonFile {target = N.getSpecFilePath beckonModuleName, content = spec}
-   in Right
-        BeckonGeneratedComponent
-          {srcFile = srcFile, tmplFile = tmplFile, specFile = specFile}
+  in  Right BeckonGeneratedComponent
+        { srcFile  = srcFile
+        , tmplFile = tmplFile
+        , specFile = specFile
+        }
 _getBeckonGenerated _ _ = Left "Failed to parse template"

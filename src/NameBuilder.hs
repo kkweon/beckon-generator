@@ -11,11 +11,15 @@ Portability : POSIX
 -}
 module NameBuilder where
 
-import qualified Config as C
-import Data.Char (isUpper, toLower)
-import qualified Data.Text as T
-import qualified System.FilePath.Posix as F
-import System.FilePath.Posix ((<.>), (</>))
+import qualified Config                        as C
+import           Data.Char                      ( isUpper
+                                                , toLower
+                                                )
+import qualified Data.Text                     as T
+import qualified System.FilePath.Posix         as F
+import           System.FilePath.Posix          ( (<.>)
+                                                , (</>)
+                                                )
 
 -- | Check if it's a valid module name
 --
@@ -33,11 +37,11 @@ import System.FilePath.Posix ((<.>), (</>))
 --
 -- For example, @{prefix}.{name}.{name2}@ will generate @\/prefix\/name\/name2\/name2.js@
 isModuleName :: T.Text -> Bool
-isModuleName xs =
-  length splitText >= 2 && isBeckonModule (getBeckonModuleName splitText)
-  where
-    splitText :: [T.Text]
-    splitText = T.splitOn "." xs
+isModuleName xs = length splitText >= 2 && isBeckonModule
+  (getBeckonModuleName splitText)
+ where
+  splitText :: [T.Text]
+  splitText = T.splitOn "." xs
 
 -- | Get Actual Module Name
 -- There are currently 4 special module names
@@ -53,9 +57,8 @@ isModuleName xs =
 -- >>> getBeckonModuleName ["steel", "answerPage"]
 -- "steel"
 getBeckonModuleName :: [T.Text] -> T.Text
-getBeckonModuleName ("beckon":x:xs) = x
-getBeckonModuleName (x:xs) = x
-
+getBeckonModuleName ("beckon" : x : xs) = x
+getBeckonModuleName (x            : xs) = x
 
 -- | Check if given 'name' is one of ["steel", "tinder", "flint", "viz"]
 --
@@ -70,11 +73,11 @@ isBeckonModule name = T.toLower name `elem` ["steel", "tinder", "flint", "viz"]
 -- "appPage"
 getComponentName :: T.Text -> T.Text
 getComponentName = fixHypen . last . T.splitOn "."
-    where
-        fixHypen :: T.Text -> T.Text
-        fixHypen = T.foldr (\c acc -> if c == '-'
-                                        then toUpperFirstLetter acc
-                                        else T.cons c acc) ""
+ where
+  fixHypen :: T.Text -> T.Text
+  fixHypen = T.foldr
+    (\c acc -> if c == '-' then toUpperFirstLetter acc else T.cons c acc)
+    ""
 
 -- | Returns a CamelCase name
 --
@@ -83,29 +86,21 @@ getComponentName = fixHypen . last . T.splitOn "."
 get_ComponentName :: T.Text -> T.Text
 get_ComponentName = toUpperFirstLetter . getComponentName
 
-
 -- | Internal helper function. Capitalize
 --
 -- >>> toUpperFirstLetter "helloWorld"
 -- "HelloWorld"
 toUpperFirstLetter :: T.Text -> T.Text
 toUpperFirstLetter = go . T.splitAt 1
-    where
-        go (first, all) = T.toUpper first <> all
-
+  where go (first, all) = T.toUpper first <> all
 
 -- | Internal helper function. Convert camelCase into hypen-case
 --
 -- >>> toHypenCase "appPage"
 -- "app-page"
 toHypenCase :: T.Text -> T.Text
-toHypenCase =
-  T.concatMap
-    (\c ->
-       if isUpper c
-         then "-" <> (T.singleton (toLower c))
-         else T.singleton c)
-
+toHypenCase = T.concatMap
+  (\c -> if isUpper c then "-" <> T.singleton (toLower c) else T.singleton c)
 
 -- | Remove "beckon." from module name to normalize
 --
@@ -117,7 +112,6 @@ toHypenCase =
 stripBeckonFromModuleName :: T.Text -> T.Text
 stripBeckonFromModuleName = T.replace "beckon." ""
 
-
 -- | Add "beckon." prefix to module name
 --
 -- >>> addBeckonPrefix "steel.answerPage"
@@ -126,8 +120,7 @@ stripBeckonFromModuleName = T.replace "beckon." ""
 -- >>> addBeckonPrefix "beckon.steel.answerPage"
 -- "beckon.steel.answerPage"
 addBeckonPrefix :: T.Text -> T.Text
-addBeckonPrefix moduleName = "beckon." <> (stripBeckonFromModuleName moduleName)
-
+addBeckonPrefix moduleName = "beckon." <> stripBeckonFromModuleName moduleName
 
 -- | Returns a JS src file path
 --
@@ -136,13 +129,13 @@ addBeckonPrefix moduleName = "beckon." <> (stripBeckonFromModuleName moduleName)
 getSrcFilePath :: T.Text -> F.FilePath
 getSrcFilePath moduleName =
   C.srcDirectory </> someName </> componentName <.> ".js"
-  where
-    someName :: F.FilePath
-    someName =
-      T.unpack $ T.replace "." "/" (stripBeckonFromModuleName moduleName)
-    componentName :: F.FilePath
-    componentName =
-      T.unpack $ getComponentName (stripBeckonFromModuleName moduleName)
+ where
+  someName :: F.FilePath
+  someName =
+    T.unpack $ T.replace "." "/" (stripBeckonFromModuleName moduleName)
+  componentName :: F.FilePath
+  componentName =
+    T.unpack $ getComponentName (stripBeckonFromModuleName moduleName)
 
 -- | Returns a HTML tmpl file path
 --
@@ -150,15 +143,10 @@ getSrcFilePath moduleName =
 -- "./src/main/resources/com/beckon/steel/answerPage/answerPage.tmpl"
 getTmplFilePath :: T.Text -> F.FilePath
 getTmplFilePath moduleName =
-  C.srcDirectory </> someName </> componentName <.> ".tmpl"
-  where
-    someName :: F.FilePath
-    someName =
-      T.unpack $ T.replace "." "/" (stripBeckonFromModuleName moduleName)
-    componentName :: F.FilePath
-    componentName =
-      T.unpack $ getComponentName (stripBeckonFromModuleName moduleName)
-
+  C.srcDirectory
+    </> getNamespaceFilePath moduleName
+    </> getFileName moduleName
+    <.> ".tmpl"
 
 -- | Returns a JS Spec file path
 --
@@ -166,11 +154,19 @@ getTmplFilePath moduleName =
 -- "./src/test/javascript/unit/steel/answerPage/answerPageSpec.js"
 getSpecFilePath :: T.Text -> F.FilePath
 getSpecFilePath moduleName =
-  C.testDirectory </> someName </> componentName <> "Spec" <.> ".js"
-  where
-    someName :: F.FilePath
-    someName =
-      T.unpack $ T.replace "." "/" (stripBeckonFromModuleName moduleName)
-    componentName :: F.FilePath
-    componentName =
-      T.unpack $ getComponentName (stripBeckonFromModuleName moduleName)
+  C.testDirectory
+    </> getNamespaceFilePath moduleName
+    </> getFileName moduleName
+    <>  "Spec"
+    <.> ".js"
+
+-- | From Module name to get namespace name
+--
+-- >>> getNamespaceFilePath "beckon.steel.answerPage"
+-- "steel/answerPage"
+getNamespaceFilePath :: T.Text -> F.FilePath
+getNamespaceFilePath = T.unpack . T.replace "." "/" . stripBeckonFromModuleName
+
+
+getFileName :: T.Text -> F.FilePath
+getFileName = T.unpack . getComponentName . stripBeckonFromModuleName

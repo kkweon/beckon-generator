@@ -13,40 +13,41 @@ Generates a file
 -}
 module FileIO
   ( generateBeckonFiles
-  ) where
+  )
+where
 
-import           Control.Monad         (unless, when)
-import qualified Data.Text.IO          as IO
-import qualified System.Directory      as D
-import qualified System.FilePath.Posix as F
-import           Template              (BeckonFile (..),
-                                        BeckonGeneratedFile (..))
+import           Control.Monad                  ( unless
+                                                , when
+                                                )
+import qualified Data.Text.IO                  as IO
+import qualified System.Directory              as D
+import qualified System.FilePath.Posix         as F
+import           Template                       ( BeckonFile(..)
+                                                , BeckonGeneratedFile(..)
+                                                )
 
 -- | Generate Beckon Files
-generateBeckonFiles ::
-     Bool -- ^ If True, generates a spec file
+generateBeckonFiles
+  :: Bool -- ^ If True, generates a spec file
   -> Bool -- ^ If True, generates a spec file only
   -> BeckonGeneratedFile
   -> IO ()
-generateBeckonFiles _ True BeckonGeneratedService {specFile} =
+generateBeckonFiles _ True BeckonGeneratedService { specFile } =
   generateBeckonFile specFile
-generateBeckonFiles _ True BeckonGeneratedComponent {specFile} =
+generateBeckonFiles _ True BeckonGeneratedComponent { specFile } =
   generateBeckonFile specFile
-generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedService { srcFile
-                                                                    , specFile
-                                                                    } = do
-  generateBeckonFile srcFile
-  unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
-generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedComponent { srcFile
-                                                                      , tmplFile
-                                                                      , specFile
-                                                                      } = do
-  generateBeckonFile srcFile
-  generateBeckonFile tmplFile
-  unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
+generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedService { srcFile, specFile }
+  = do
+    generateBeckonFile srcFile
+    unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
+generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedComponent { srcFile, tmplFile, specFile }
+  = do
+    generateBeckonFile srcFile
+    generateBeckonFile tmplFile
+    unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
 
 generateBeckonFile :: BeckonFile -> IO ()
-generateBeckonFile BeckonFile {target, content} = do
+generateBeckonFile BeckonFile { target, content } = do
   let dirName = F.takeDirectory target
   doesDirExist <- D.doesDirectoryExist dirName
   unless doesDirExist (D.createDirectoryIfMissing True dirName)

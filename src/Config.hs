@@ -17,11 +17,12 @@ module Config
   , testDirectory
   , componentTemplate
   , serviceTemplate
-  ) where
+  )
+where
 
-import qualified System.FilePath.Posix as F
-import qualified Text.Mustache as M
-import Text.Mustache.Compile (embedSingleTemplate)
+import qualified System.FilePath.Posix         as F
+import qualified Text.Mustache                 as M
+import           Text.Mustache.Compile          ( embedSingleTemplate )
 
 -- | Prefix for a JS src file
 srcDirectory :: F.FilePath

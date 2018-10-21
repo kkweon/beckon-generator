@@ -1,13 +1,15 @@
 module Main where
 
-import qualified Lib as L
-import Options.Applicative as OA
+import qualified Lib                           as L
+import           Options.Applicative           as OA
+import qualified System.Directory              as D
 
 main :: IO ()
 main = L.handleGenerateComponent =<< OA.execParser opts
-  where
-    opts =
-      OA.info
-        (L.beckonGeneratorOptionParser <**> OA.helper)
-        (OA.fullDesc <> OA.progDesc "Generate AngularJS Beckon Component" <>
-         OA.header "Beckon AngularJS Component Generator")
+ where
+  opts = OA.info
+    (L.beckonGeneratorOptionParser <**> OA.helper)
+    (  OA.fullDesc
+    <> OA.progDesc "Generate AngularJS Beckon Component"
+    <> OA.header "Beckon AngularJS Component Generator"
+    )
