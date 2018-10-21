@@ -32,7 +32,7 @@ import           Control.Monad                  ( when )
 
 -- | Entry point
 handleGenerateComponent :: BeckonGeneratorOption -> IO ()
-handleGenerateComponent BeckonGeneratorOption { moduleName, specFile, specOnly, isService }
+handleGenerateComponent BeckonGeneratorOption { moduleName, specFile, specOnly, isService, force }
   = do
     doesPackageJsonExist <- D.doesFileExist "package.json"
     if doesPackageJsonExist
@@ -41,11 +41,17 @@ handleGenerateComponent BeckonGeneratorOption { moduleName, specFile, specOnly, 
          in  case TE.getBeckonGeneratedFile generatedType moduleName of
                Left errorMsg -> TIO.putStrLn errorMsg
                Right beckonGenerated ->
-                 F.generateBeckonFiles specFile specOnly beckonGenerated
+                 F.generateBeckonFiles flags force beckonGenerated
         )
       else
         TIO.putStrLn
           "package.json not found. Please run again from the project root (where package.json exists)"
+ where
+  flags :: F.GenerateFileTypeFlag
+  flags | specOnly  = F.SpecOnly
+        | specFile  = F.All
+        | otherwise = F.SrcOnly
+
 
 -- | Available command line options
 data BeckonGeneratorOption = BeckonGeneratorOption
@@ -53,6 +59,7 @@ data BeckonGeneratorOption = BeckonGeneratorOption
   , specFile :: Bool
   , specOnly :: Bool
   , isService :: Bool
+  , force :: Bool
   }
 
 -- | Helper to build a command line options
@@ -66,3 +73,4 @@ beckonGeneratorOptionParser =
     <*> A.switch (A.long "spec" <> A.short 'S' <> A.help "Generate a spec file")
     <*> A.switch (A.long "spec-only" <> A.help "Generate a spec file only")
     <*> A.switch (A.long "service" <> A.help "Generate a service file")
+    <*> A.switch (A.long "force" <> A.help "Force (overwrite if file exists)")

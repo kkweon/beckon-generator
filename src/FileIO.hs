@@ -13,9 +13,11 @@ Generates a file
 -}
 module FileIO
   ( generateBeckonFiles
+  , GenerateFileTypeFlag(..)
   )
 where
 
+import           Text.Printf                    ( printf )
 import           Control.Monad                  ( unless
                                                 , when
                                                 )
@@ -26,29 +28,46 @@ import           Template                       ( BeckonFile(..)
                                                 , BeckonGeneratedFile(..)
                                                 )
 
+
+data GenerateFileTypeFlag = All | SpecOnly | SrcOnly deriving (Eq)
+
 -- | Generate Beckon Files
 generateBeckonFiles
-  :: Bool -- ^ If True, generates a spec file
-  -> Bool -- ^ If True, generates a spec file only
+  :: GenerateFileTypeFlag
+  -> Bool -- ^ FORCE
   -> BeckonGeneratedFile
   -> IO ()
-generateBeckonFiles _ True BeckonGeneratedService { specFile } =
-  generateBeckonFile specFile
-generateBeckonFiles _ True BeckonGeneratedComponent { specFile } =
-  generateBeckonFile specFile
-generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedService { srcFile, specFile }
+generateBeckonFiles SpecOnly force BeckonGeneratedService { specFile } =
+  generateBeckonFile specFile force
+generateBeckonFiles SpecOnly force BeckonGeneratedComponent { specFile } =
+  generateBeckonFile specFile force
+generateBeckonFiles generateType force BeckonGeneratedService { srcFile, specFile }
   = do
-    generateBeckonFile srcFile
-    unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
-generateBeckonFiles shouldGenerateSpecFile _ BeckonGeneratedComponent { srcFile, tmplFile, specFile }
+    generateBeckonFile srcFile force
+    when (generateType == All) (generateBeckonFile specFile force)
+generateBeckonFiles generateType force BeckonGeneratedComponent { srcFile, tmplFile, specFile }
   = do
-    generateBeckonFile srcFile
-    generateBeckonFile tmplFile
-    unless (not shouldGenerateSpecFile) (generateBeckonFile specFile)
+    generateBeckonFile srcFile  force
+    generateBeckonFile tmplFile force
+    when (generateType == All) (generateBeckonFile specFile force)
 
-generateBeckonFile :: BeckonFile -> IO ()
-generateBeckonFile BeckonFile { target, content } = do
+generateBeckonFile
+  :: BeckonFile
+  -> Bool -- ^ Force
+  -> IO ()
+generateBeckonFile BeckonFile { target, content } force = do
   let dirName = F.takeDirectory target
   doesDirExist <- D.doesDirectoryExist dirName
   unless doesDirExist (D.createDirectoryIfMissing True dirName)
-  IO.writeFile target content
+
+  fileExists <- D.doesFileExist target
+  writeFileHandler fileExists force
+ where
+  writeFileHandler True True =
+    printf "Overwriting %s\n" target >> IO.writeFile target content
+  writeFileHandler True  False = showErrorMsg
+  writeFileHandler False _     = IO.writeFile target content
+
+  showErrorMsg :: IO ()
+  showErrorMsg =
+    printf "Skipping a file (%s) because it already exists\n" target

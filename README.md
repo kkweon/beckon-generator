@@ -8,10 +8,10 @@
 beg --help
 ```
 
-```
+```shell
 Beckon AngularJS Component Generator
 
-Usage: beg MODULE NAME [-S|--spec] [--spec-only] [--service]
+Usage: beg MODULE NAME [-S|--spec] [--spec-only] [--service] [--force]
   Generate AngularJS Beckon Component
 
 Available options:
@@ -19,6 +19,7 @@ Available options:
   -S,--spec                Generate a spec file
   --spec-only              Generate a spec file only
   --service                Generate a service file
+  --force                  Force (overwrite if file exists)
   -h,--help                Show this help text
 ```
 
