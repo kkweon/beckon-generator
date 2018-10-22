@@ -65,6 +65,7 @@ data BeckonGeneratedFile
                            , specFile :: BeckonFile }
   deriving (Show)
 
+
 data GeneratedType
   = Component
   | Service
