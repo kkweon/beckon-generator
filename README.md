@@ -11,13 +11,13 @@ beg --help
 ```shell
 Beckon AngularJS Component Generator
 
-Usage: beg MODULE NAME [-S|--spec] [--spec-only] [--service] [--force]
+Usage: beg MODULE NAME ([-S|--spec] | [--spec-only]) [--service] [--force]
            [--old-typescript]
   Generate AngularJS Beckon Component
 
 Available options:
   MODULE NAME              Beckon Module Name (e.g., beckon.steel.answerPage)
-  -S,--spec                Generate a spec file
+  -S,--spec                Generate a spec file along with JS/TS file
   --spec-only              Generate a spec file only
   --service                Generate a service file
   --force                  Force (overwrite if file exists)
