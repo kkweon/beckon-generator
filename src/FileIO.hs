@@ -63,16 +63,18 @@ generateBeckonFiles
   -> Bool -- ^ FORCE
   -> BeckonGeneratedFile
   -> IO ()
-generateBeckonFiles flag force beckonTarget = mgenerateBeckonFiles force files
+generateBeckonFiles flag force beckonTarget = parallelGenerateBeckonFiles
+  force
+  files
   where files = grabFiles beckonTarget flag
 
 
 -- | Generate files in parallel
-mgenerateBeckonFiles
+parallelGenerateBeckonFiles
   :: Bool -- ^ force write
   -> [BeckonFile] -- ^ Beckon files
   -> IO ()
-mgenerateBeckonFiles force xs = do
+parallelGenerateBeckonFiles force xs = do
   messageMVar <- newEmptyMVar :: IO (MVar (Maybe String))
   forM_ xs
     $ \beckonFile -> forkIO $ generateBeckonFile beckonFile force messageMVar
@@ -106,7 +108,6 @@ generateBeckonFile BeckonFile { target, content } force messageChan = do
   showErrorMsg :: IO ()
   showErrorMsg =
     sendMessage $ "Skipping a file (" ++ target ++ ") because it already exists"
-
 
   succeed :: IO ()
   succeed = putMVar messageChan Nothing

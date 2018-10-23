@@ -5,6 +5,7 @@ module NameBuilderSpec
   )
 where
 
+import qualified FileType
 import qualified NameBuilder                   as N
 import           Test.Hspec
 
@@ -50,14 +51,19 @@ spec = do
       `shouldBe` "beckon.steel.answerPage"
   describe "getSrcFilePath" $ do
     it "returns a correct JS file path"
-      $ N.getSrcFilePath "steel.answerPage"
+      $ N.getSrcFilePath FileType.JavaScript "steel.answerPage"
       `shouldBe` "./src/main/resources/com/beckon/steel/answerPage/answerPage.js"
     it "returns a correct JS file path"
-      $ N.getSrcFilePath "beckon.steel.answerPage"
+      $ N.getSrcFilePath FileType.JavaScript "beckon.steel.answerPage"
       `shouldBe` "./src/main/resources/com/beckon/steel/answerPage/answerPage.js"
     it "returns a correct JS file path"
-      $ N.getSrcFilePath "beckon.steel.answerPage.answerPageStore"
+      $ N.getSrcFilePath FileType.JavaScript
+                         "beckon.steel.answerPage.answerPageStore"
       `shouldBe` "./src/main/resources/com/beckon/steel/answerPage/answerPageStore/answerPageStore.js"
+    it "returns a correct TS file path"
+      $ N.getSrcFilePath FileType.OldTypeScript
+                         "beckon.steel.answerPage.answerPageStore"
+      `shouldBe` "./src/main/resources/com/beckon/steel/answerPage/answerPageStore/answerPageStore.ts"
   describe "getTmplFilePath" $ do
     it "returns a correct JS file path"
       $ N.getTmplFilePath "steel.answerPage"

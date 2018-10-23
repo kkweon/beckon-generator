@@ -2,7 +2,6 @@ module Main where
 
 import qualified Lib                           as L
 import           Options.Applicative           as OA
-import qualified System.Directory              as D
 
 main :: IO ()
 main = L.handleGenerateComponent =<< OA.execParser opts

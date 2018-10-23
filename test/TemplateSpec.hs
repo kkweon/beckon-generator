@@ -14,6 +14,8 @@ import           Template                       ( BeckonFile(..)
 import qualified Template                      as T
 import           Test.Hspec
 import qualified Text.Mustache                 as M
+import qualified AngularJSType
+import qualified FileType
 
 spec :: Spec
 spec = do
@@ -27,7 +29,9 @@ spec = do
     let result = M.substitute C.componentTemplate ngTemplate
     length (T.breakOnAll "module(\"beckon.steel.answerPage\")" result) > 0
   describe "getBeckonGeneratedComponent" $ it "do something" $ do
-    let result = T.getBeckonGeneratedFile T.Component "steel.answerPage"
+    let result = T.getBeckonGeneratedFile FileType.JavaScript
+                                          AngularJSType.Component
+                                          "steel.answerPage"
     case result of
       Right bg ->
         content (tmplFile bg)

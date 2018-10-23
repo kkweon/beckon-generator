@@ -12,6 +12,7 @@ beg --help
 Beckon AngularJS Component Generator
 
 Usage: beg MODULE NAME [-S|--spec] [--spec-only] [--service] [--force]
+           [--old-typescript]
   Generate AngularJS Beckon Component
 
 Available options:
@@ -20,6 +21,7 @@ Available options:
   --spec-only              Generate a spec file only
   --service                Generate a service file
   --force                  Force (overwrite if file exists)
+  --old-typescript         Generates an old (namespace) TypeScript
   -h,--help                Show this help text
 ```
 

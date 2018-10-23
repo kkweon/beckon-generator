@@ -16,7 +16,9 @@ module Config
   ( srcDirectory
   , testDirectory
   , componentTemplate
+  , componentOldTypeScriptTemplate
   , serviceTemplate
+  , serviceOldTypeScriptTemplate
   )
 where
 
@@ -36,6 +38,16 @@ testDirectory = "./src/test/javascript/unit"
 componentTemplate :: M.Template
 componentTemplate = $(embedSingleTemplate "templates/component.mustache")
 
+-- | Old TypeScript Mustache template file
+componentOldTypeScriptTemplate :: M.Template
+componentOldTypeScriptTemplate =
+  $(embedSingleTemplate "templates/component.old-typescript.mustache")
+
 -- | Mustache template file to be used to generated a service
 serviceTemplate :: M.Template
 serviceTemplate = $(embedSingleTemplate "templates/service.mustache")
+
+-- | Old TypeScript Mustache template file
+serviceOldTypeScriptTemplate :: M.Template
+serviceOldTypeScriptTemplate =
+  $(embedSingleTemplate "templates/service.old-typescript.mustache")

@@ -11,6 +11,7 @@ Portability : POSIX
 -}
 module NameBuilder where
 
+import qualified FileType
 import qualified Config                        as C
 import           Data.Char                      ( isUpper
                                                 , toLower
@@ -126,16 +127,16 @@ addBeckonPrefix moduleName = "beckon." <> stripBeckonFromModuleName moduleName
 --
 -- >>> getSrcFilePath "steel.answerPage"
 -- "./src/main/resources/com/beckon/steel/answerPage/answerPage.js"
-getSrcFilePath :: T.Text -> F.FilePath
-getSrcFilePath moduleName =
-  C.srcDirectory </> someName </> componentName <.> ".js"
+getSrcFilePath :: FileType.FileType -> T.Text -> F.FilePath
+getSrcFilePath fileType moduleName =
+  C.srcDirectory
+    </> getNamespaceFilePath moduleName
+    </> getFileName moduleName
+    <.> getExtension fileType
  where
-  someName :: F.FilePath
-  someName =
-    T.unpack $ T.replace "." "/" (stripBeckonFromModuleName moduleName)
-  componentName :: F.FilePath
-  componentName =
-    T.unpack $ getComponentName (stripBeckonFromModuleName moduleName)
+  getExtension :: FileType.FileType -> String
+  getExtension FileType.OldTypeScript = ".ts"
+  getExtension FileType.JavaScript    = ".js"
 
 -- | Returns a HTML tmpl file path
 --

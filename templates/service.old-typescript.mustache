@@ -1,0 +1,26 @@
+namespace {{ moduleName }} {
+    export class {{ ComponentName }} {
+    }
+
+    angular
+        .module("{{ moduleName }}", [])
+        .service("{{ componentName }}", {{ ComponentName }});
+}
+####
+describe("{{ componentName }}", function() {
+    "use strict";
+    let {{ componentName }};
+
+    beforeEach(module("{{ moduleName }}"));
+    beforeEach(
+        inject(function(_{{ componentName }}_) {
+            {{ componentName }} = _{{ componentName }}_;
+        })
+    );
+
+    describe("Template", function() {
+        it("should be defined", function() {
+            expect({{ componentName }}).toBeDefined();
+        });
+    });
+});
