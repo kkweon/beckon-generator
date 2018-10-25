@@ -48,6 +48,9 @@ script:
 # Build the package, its tests, and its docs and run the tests
 - stack --no-terminal test --haddock --no-haddock-deps
 
+after_success:
+- git tag "${TRAVIS_OS_NAME}_$(date +'%Y%m%d%H%M%S')" --force
+
 deploy:
     provider: releases
     api_key: $GITHUB_TOKEN
@@ -55,4 +58,3 @@ deploy:
     skip_cleanup: true
     on:
         branch: master
-        tags: true
