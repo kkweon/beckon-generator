@@ -5,15 +5,46 @@
 ## Help
 
 ```shell
-beg --help
+> beg --help
+
+Usage: beg [-V|--version] COMMAND
+  Beckon Generator CLI
+
+Available options:
+  -h,--help                Show this help text
+  -V,--version             show version
+
+Available commands:
+  react                    Generate React file
+  ng                       Generate AngularJS file
 ```
 
-```shell
-Beckon AngularJS Component Generator
+### beg react
 
-Usage: beg MODULE NAME ([-S|--spec] | [--spec-only]) [--service] [--force]
-           [--old-typescript]
-  Generate AngularJS Beckon Component
+```shell
+> beg react --help
+
+Usage: beg react module/component [--no-src] [--spec] [--story] [-f|--force]
+  Generate React file
+
+Available options:
+  module/component         Module name can be atoms/molecules/organisms. (e.g.,
+                           atoms/BrPageHeader)
+  --no-src                 Do not generate a src file
+  --spec                   Generate a spec file
+  --story                  Genereate a Storybook story file
+  -f,--force               Overwrite when a target file exists
+  -h,--help                Show this help text
+```
+
+### beg ng
+
+```shell
+> beg ng --help
+
+Usage: beg ng MODULE NAME ([-S|--spec] | [--spec-only]) [--service] [--force]
+              [--old-typescript]
+  Generate AngularJS file
 
 Available options:
   MODULE NAME              Beckon Module Name (e.g., beckon.steel.answerPage)
@@ -29,7 +60,7 @@ Available options:
 ## QuickStart
 
 ```shell
-beg steel.answerPage --spec
+> beg ng steel.answerPage --spec
 ```
 
 will generate

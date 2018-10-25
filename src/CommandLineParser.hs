@@ -63,7 +63,7 @@ finalParser =
        "ng"
        (A.info
           (argAngularJSOptionParser <**> A.helper)
-          (A.progDesc "Generate AngularJS file" <> A.header "Header")))
+          (A.progDesc "Generate AngularJS file")))
   where
     reactParser =
       A.info
