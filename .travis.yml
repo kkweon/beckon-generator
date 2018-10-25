@@ -49,12 +49,13 @@ script:
 - stack --no-terminal test --haddock --no-haddock-deps
 
 after_success:
-- git tag "${TRAVIS_OS_NAME}_$(date +'%Y%m%d%H%M%S')" --force
+- mv "$(stack path --local-install-root)/bin/beg" "beg-${TRAVIS_OS_NAME}"
+- git tag "$(date +'%Y%m%d%H%M%S')"
 
 deploy:
     provider: releases
     api_key: $GITHUB_TOKEN
-    file: "$(stack path --local-install-root)/bin/beg"
+    file: "beg-${TRAVIS_OS_NAME}"
     skip_cleanup: true
     on:
         branch: master
