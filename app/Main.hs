@@ -1,14 +1,15 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
-import qualified Lib                           as L
-import           Options.Applicative           as OA
+import qualified CommandLineParser as L
+import qualified Data.Text.IO as TIO
+import Options.Applicative as OA
+import qualified System.Directory as Directory
 
 main :: IO ()
-main = L.handleGenerateComponent =<< OA.execParser opts
- where
-  opts = OA.info
-    (L.beckonGeneratorOptionParser <**> OA.helper)
-    (  OA.fullDesc
-    <> OA.progDesc "Generate AngularJS Beckon Component"
-    <> OA.header "Beckon AngularJS Component Generator"
-    )
+main = do
+  doesPackageJsonExist <- Directory.doesFileExist "./package.json"
+  if doesPackageJsonExist
+    then L.handleArgOptions =<< OA.execParser L.finalParserInfo
+    else TIO.putStrLn "package.json not found in the current directory"

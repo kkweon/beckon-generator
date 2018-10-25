@@ -25,11 +25,11 @@ help:
 
 ## Run brittany to format
 format:
-	fd ".hs" | xargs -n1 brittany --write-mode inplace
+	fd ".hs" | xargs -n1 hindent
 
 ## Run hlint
 lint:
-	hlint app src
+	hlint app src test
 
 ## Run stack clean
 clean:

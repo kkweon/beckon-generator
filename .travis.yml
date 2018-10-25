@@ -31,9 +31,7 @@ addons:
 
 before_install:
 # Download and unpack the stack executable
-- mkdir -p ~/.local/bin
-- export PATH=$HOME/.local/bin:$PATH
-- travis_retry curl -sSL https://get.haskellstack.org/ | sh
+- bash .travis/before_install.sh
 
 install:
 # Build dependencies
@@ -42,6 +40,13 @@ install:
 script:
 # Build the package, its tests, and its docs and run the tests
 - stack --no-terminal test --haddock --no-haddock-deps
+
+
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "YOUR GIT USER NAME"
+  - git config --local user.email "YOUR GIT USER EMAIL"
+  - git tag "travis-build-${TRAVIS_OS_NAME}_$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
 
 deploy:
     provider: releases

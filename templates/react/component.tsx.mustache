@@ -1,0 +1,35 @@
+import * as React from "react";
+import { ReactChild, ReactChildren } from "react";
+
+interface Props {
+    children: ReactChildren | ReactChild;
+}
+
+export const {{ComponentName}} = (props: Props) => (
+    <div>
+        <h2>{{ComponentName}} is working</h2>
+    </div>
+);
+####
+import * as React from "react";
+import { {{ComponentName}} } from "./{{ComponentName}}";
+import { shallow } from "enzyme";
+
+test("renders {{ComponentName}} correctly", () => {
+    const tree = shallow(
+        <{{ComponentName}} />
+    );
+    expect(tree).toMatchSnapshot();
+});
+####
+import React from "react";
+
+import { storiesOf } from "@storybook/react";
+import { {{ComponentName}} } from "./{{ComponentName}}";
+
+import { action } from "@storybook/addon-actions";
+import { text, boolean } from "@storybook/addon-knobs";
+
+storiesOf("{{ ModuleName }}", module).addWithJSX(`{{ ComponentName }}`, () => (
+    <{{ComponentName}} />
+));

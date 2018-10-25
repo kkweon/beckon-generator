@@ -2,7 +2,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 {-|
-Module      : Config
+Module      : AngularJS.Config
 Description : Prefix and Template files
 Copyright   : (c) Mo Kweon
 License     : MIT
@@ -12,19 +12,18 @@ Portability : POSIX
 
 Template and prefix are defined in this file
 -}
-module Config
+module AngularJS.Config
   ( srcDirectory
   , testDirectory
   , componentTemplate
   , componentOldTypeScriptTemplate
   , serviceTemplate
   , serviceOldTypeScriptTemplate
-  )
-where
+  ) where
 
-import qualified System.FilePath.Posix         as F
-import qualified Text.Mustache                 as M
-import           Text.Mustache.Compile          ( embedSingleTemplate )
+import qualified System.FilePath.Posix as F
+import qualified Text.Mustache as M
+import Text.Mustache.Compile (embedSingleTemplate)
 
 -- | Prefix for a JS src file
 srcDirectory :: F.FilePath
